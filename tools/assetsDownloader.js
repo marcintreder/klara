@@ -21,13 +21,10 @@ module.exports = function assetsDownloader() {
 
   /* Show Klara welcome message */
   const titleChalk = text => styles.text.titleChalk(text);
-  console.log(
-    titleChalk("Klara. Assets and Icons Management for UXPin Design Systems.")
-  );
+  console.log(titleChalk("Klara is on the task!"));
 
   /* Set loader/spinner */
   const spin = spinner("Thinking...");
-  spin.setSpinnerString(27);
   spin.start();
 
   /* Fetch JSON from UXPin servers */

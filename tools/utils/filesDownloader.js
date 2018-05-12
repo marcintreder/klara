@@ -20,7 +20,7 @@ const CONFIG = require(`${process.cwd()}/icons.config.js`);
  */
 module.exports = function filesDownloader(dir, assetsArr) {
   /* Progress bar */
-  const downloadMsg = chalk.bold.hex(styles.colors.blue)(
+  const downloadMsg = chalk.bold.hex(styles.colors.mint)(
     `⚛ Klara is checking assets on UXPin servers –`
   );
   const catName = dir.substring(dir.lastIndexOf("/") + 1);
@@ -156,14 +156,14 @@ module.exports = function filesDownloader(dir, assetsArr) {
             );
       const confirmationMsg =
         modifiedCategory.length > 0
-          ? chalk.hex(styles.colors.mint)(
+          ? chalk.hex(styles.colors.blue)(
               `✓ Klara checked ${
                 assetsArr.length
               } files in category ${categoryName} and saved ${
                 modifiedCategory.length
               } of them.`
             )
-          : chalk.hex(styles.colors.mint)(
+          : chalk.hex(styles.colors.blue)(
               `✓ Klara checked ${
                 assetsArr.length
               } files in category ${categoryName} and didn't save any of them. Most likely no assets in the design system stored in UXPin were changed.`

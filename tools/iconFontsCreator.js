@@ -4,7 +4,6 @@ const config = require(`${process.cwd()}/icons.config.js`);
 const progressBar = require("progress");
 const path = require("path");
 const chalk = require("chalk");
-const styles = require("../styles/chalkStyle");
 
 /* IconFontsGenerator uses webfontsGenerator package to generate iconfonts
 ** from SVGs downloaded from UXPin design system.
@@ -22,7 +21,6 @@ module.exports = function iconFontsCreator(dir) {
     const files = filesArr;
     /* Destination for iconFont files */
     const upperDir = dir.substr(0, dir.lastIndexOf("/"));
-    const dirName = dir.substr(dir.indexOf("/") + 1);
     const spriterDestObj = { dest: `${upperDir}/IconFonts` };
     fse.ensureDirSync(`${upperDir}/IconFonts`);
     /* Name of the font generated from the asset category name in UXPin */
@@ -34,17 +32,11 @@ module.exports = function iconFontsCreator(dir) {
       { fontName: fontName },
       { files: files }
     );
-
     /* WebfontsGenerator generates iconfonts from SVGs */
     webfontsGenerator(mergedConfig, function(error) {
       if (error) {
         console.log("Fail!", error);
       } else {
-        process.stderr.clearLine();
-        process.stdout.cursorTo(0);
-        console.log(
-          chalk.hex(styles.colors.mint)(`✓ Icon Fonts for ${dirName} saved!`)
-        );
       }
     });
   };
@@ -53,6 +45,10 @@ module.exports = function iconFontsCreator(dir) {
     /* Check if directory for iconfonts from main config exists,
     ** if not - create it.
      */
+    const confirmationMsg = chalk.greenBright(
+      `✓ Saving Icon Font files for ${dir}`
+    );
+
     const files = fse.readdirSync(dir);
 
     /* Activate WebfontsGenerator */
