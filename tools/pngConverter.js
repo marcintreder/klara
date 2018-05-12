@@ -33,6 +33,8 @@ module.exports = function pngConverter(data) {
 
   spin.setSpinnerString(27);
   spin.start();
+  process.stderr.clearLine();
+  process.stdout.cursorTo(0);
 
   Promise.all(
     filesArr.map(file => {
@@ -48,6 +50,7 @@ module.exports = function pngConverter(data) {
           });
         })
         .then(buffer => {
+          spin.stop(true);
           bar.tick();
           fse.writeFile(`${destination}/${fileName}.png`, buffer);
           return Promise.resolve({ fileName });
