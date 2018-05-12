@@ -1,0 +1,39 @@
+$text-x: 0;
+$text-y: 0;
+$text-width: 216px;
+$text-height: 182px;
+$text: $text-x $text-y $text-width $text-height;
+$layers-x: -216px;
+$layers-y: 0;
+$layers-width: 224px;
+$layers-height: 173px;
+$layers: $layers-x $layers-y $layers-width $layers-height;
+$data-x: 0;
+$data-y: -182px;
+$data-width: 208px;
+$data-height: 173px;
+$data: $data-x $data-y $data-width $data-height;
+$design-x: -440px;
+$design-y: 0;
+$design-width: 196px;
+$design-height: 180px;
+$design: $design-x $design-y $design-width $design-height;
+
+@mixin sprite-image {
+  background-image: url("./IllustrationsSprite.png");
+}
+@mixin sprite-position($sprite) {
+  background-position: nth($sprite, 1) nth($sprite, 2);
+}
+@mixin sprite-width($sprite) {
+  width: nth($sprite, 3);
+}
+@mixin sprite-height($sprite) {
+  height: nth($sprite, 4);
+}
+@mixin sprite($sprite) {
+  @include sprite-image;
+  @include sprite-position($sprite);
+  @include sprite-width($sprite);
+  @include sprite-height($sprite);
+}
