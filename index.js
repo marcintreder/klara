@@ -7,6 +7,7 @@ const clear = require("clear");
 const questions = require("./templates/onboarding.questions");
 const chalk = require("chalk");
 const styles = require("./styles/chalkStyle");
+const spinner = require("./tools//utils/spinner");
 
 if (fse.existsSync(`${process.cwd()}/icons.config.js`)) {
   const assetsDownloader = require("./tools/assetsDownloader.js");
@@ -26,10 +27,10 @@ function createConfig() {
   /* Welcome Messages */
   console.log(
     `${titleChalk(
-      "Welcome to Klara! The bridge between UXPin based Design Systems and your development environment!"
+      "Welcome to Klara! The bridge between assets in UXPin based design systems and your development environment!"
     )}`
   );
-  console.log("             ");
+  console.log("\n");
   console.log(
     `${defaultChalk(
       "To start, we have to learn a little bit about your process."
@@ -40,13 +41,13 @@ function createConfig() {
       "Please answer the questions below, so we can generate a custom tailored config for you."
     )}`
   );
-  console.log("             ");
+  console.log("\n");
   console.log(
     `${defaultChalk(
       `PS. Klara has been named as a tribute to Klara Dan von Neumann - one of the first programmers!`
     )}`
   );
-  console.log("             ");
+  console.log("\n");
 
   inquirer
     .prompt(questions)
@@ -58,10 +59,7 @@ function createConfig() {
 
       /* Icon Font Settings */
       configTemplate.webfontConfig.active =
-        answers.assets.indexOf("Icon Fonts") > -1;
-      configTemplate.webfontConfig.settings.dest = answers.iconFont_dest
-        ? answers.iconFont_dest
-        : "./IconFonts";
+        answers.operations.indexOf("Convert SVGs to Icon Fonts") > -1;
       configTemplate.webfontConfig.settings.types = answers.iconFont_type
         ? answers.iconFont_type
         : "";
@@ -80,10 +78,7 @@ function createConfig() {
 
       /* SVG Sprite Settings */
       configTemplate.svgSprite.active =
-        answers.assets.indexOf("SVG Sprites") > -1;
-      configTemplate.svgSprite.settings.dest = answers.svg_sprite_dest
-        ? answers.svg_sprite_dest
-        : "./SVGSprites";
+        answers.operations.indexOf("Convert SVGs to SVG Sprites") > -1;
       svgSpriteTypes = ["css", "view", "defs", "symbol", "stack"];
       svgSpriteTypes.map(item => {
         if (answers.svg_sprite_type) {
@@ -95,18 +90,11 @@ function createConfig() {
       });
 
       /* PNG Settings */
-      configTemplate.pngConverter.active = answers.assets.indexOf("PNGs") > -1;
-      configTemplate.pngConverter.settings.dest = answers.png_dest
-        ? answers.png_dest
-        : "./PNGSprites";
-
+      configTemplate.pngConverter.active = answers.operations.indexOf("Convert SVGs to PNGs") > -1;
+    
       /* PNG Sprite Settings */
       configTemplate.pngSprite.active =
-        answers.assets.indexOf("PNG Sprites") > -1;
-
-      configTemplate.pngSprite.dest = answers.png_sprite_dest
-        ? answers.png_sprite_stylesheet
-        : "";
+        answers.operations.indexOf("Convert PNGs to PNG Sprites") > -1;
 
       configTemplate.pngSprite.settings.stylesheet = answers.png_sprite_stylesheet
         ? answers.png_sprite_stylesheet
@@ -122,8 +110,19 @@ function createConfig() {
       fse.writeFileSync(
         `${process.cwd()}/icons.config.js`,
         moduleString,
-        "utf8"
-      );
-      console.log(chalk.hex(styles.colors.mint)("✓ config file created"));
+        "utf8");
+      console.log(chalk.hex(styles.colors.blue)("✓ config file created. Time to generate files!"));
+
+      const spin = spinner("❊ Getting ready...");
+      spin.setSpinnerString(27);
+      spin.start();
+    
+      setTimeout(()=> {
+        spin.stop(true);
+        if (fse.existsSync(`${process.cwd()}/icons.config.js`)) {
+          const assetsDownloader = require("./tools/assetsDownloader.js");
+          assetsDownloader();
+        }
+      }, 4000);      
     });
 }

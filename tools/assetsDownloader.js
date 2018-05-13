@@ -3,7 +3,6 @@ const fse = require("fs-extra");
 /* Fetch tools */
 const fetch = require("node-fetch");
 /* CLI Dependencies */
-// const Spinner = require("cli-spinner").Spinner;
 const chalk = require("chalk");
 const clear = require("clear");
 const styles = require("../styles/chalkStyle");
@@ -21,7 +20,7 @@ module.exports = function assetsDownloader() {
 
   /* Show Klara welcome message */
   const titleChalk = text => styles.text.titleChalk(text);
-  console.log(titleChalk("Klara is on the task!"));
+  console.log(titleChalk("Klara – The bridge between assets in UXPin based design systems and your development environment!"));
 
   /* Set loader/spinner */
   const spin = spinner("Thinking...");
@@ -44,6 +43,11 @@ module.exports = function assetsDownloader() {
       })
       .then(() => {
         spin.stop(true);
+        /* App exit message */
+        process.on('exit', function(code) {  
+          return console.log(chalk.hex(styles.colors.green)(`♕ Klara's job is done! \n★ Be nice to people and don't forget about Klara Dan von Neumann – one of the very first programmers! 
+          `));
+      });
         return;
       });
   })();

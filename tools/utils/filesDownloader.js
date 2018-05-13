@@ -20,7 +20,7 @@ const CONFIG = require(`${process.cwd()}/icons.config.js`);
  */
 module.exports = function filesDownloader(dir, assetsArr) {
   /* Progress bar */
-  const downloadMsg = chalk.bold.hex(styles.colors.mint)(
+  const downloadMsg = chalk.hex(styles.colors.blue)(
     `⚛ Klara is checking assets on UXPin servers –`
   );
   const catName = dir.substring(dir.lastIndexOf("/") + 1);
@@ -51,7 +51,9 @@ module.exports = function filesDownloader(dir, assetsArr) {
                  */
                 return svgo.optimize(data).then(function(result) {
                   if (result.data !== localFile) {
-                    console.log(`Overwriting: ${item.fullName}`);
+                    process.stderr.clearLine();
+                    process.stdout.cursorTo(0);
+                    console.log(chalk.hex(styles.colors.orange)(`Overwriting: ${item.fullName}`));
                     fse.writeFile(item.fullDirectory, result.data);
                     /* Return a promise with the relevant data for
                     ** other operations.
@@ -71,7 +73,9 @@ module.exports = function filesDownloader(dir, assetsArr) {
                 /* Files comparison when SVGO clean-up is turned off */
                 const svgString = data.toString();
                 if (svgString !== localFile) {
-                  console.log(`Overwriting: ${item.fullName}`);
+                  process.stderr.clearLine();
+                  process.stdout.cursorTo(0);
+                  console.log(chalk.hex(styles.colors.orange)(`Overwriting: ${item.fullName}`));
                   fse.writeFile(item.fullDirectory, data);
                   return Promise.resolve({
                     modified: item.directory,
@@ -94,7 +98,9 @@ module.exports = function filesDownloader(dir, assetsArr) {
                   });
                 }).then(onlineSize => {
                   if (localFileSize !== onlineSize) {
-                    console.log(`Overwriting: ${item.fullName}`);
+                    process.stderr.clearLine();
+                    process.stdout.cursorTo(0);
+                    console.log(chalk.hex(styles.colors.orange)(`Overwriting: ${item.fullName}`));
                     fse.writeFileSync(item.fullDirectory, data);
                     return Promise.resolve({
                       modified: item.directory,
@@ -156,19 +162,20 @@ module.exports = function filesDownloader(dir, assetsArr) {
             );
       const confirmationMsg =
         modifiedCategory.length > 0
-          ? chalk.hex(styles.colors.blue)(
+          ? chalk.hex(styles.colors.mint)(
               `✓ Klara checked ${
                 assetsArr.length
               } files in category ${categoryName} and saved ${
                 modifiedCategory.length
               } of them.`
             )
-          : chalk.hex(styles.colors.blue)(
+          : chalk.hex(styles.colors.mint)(
               `✓ Klara checked ${
                 assetsArr.length
               } files in category ${categoryName} and didn't save any of them. Most likely no assets in the design system stored in UXPin were changed.`
             );
-
+            process.stderr.clearLine();
+            process.stdout.cursorTo(0);
       bar.complete ? console.log(confirmationMsg) : "";
 
       if (modifiedCategory.length > 0) {

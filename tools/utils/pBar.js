@@ -4,28 +4,25 @@ const chalk = require("chalk");
 const styles = require("../../styles/chalkStyle");
 
 module.exports = function pBar(message, category, length) {
+  const BAR_CONFIG =  {
+    total: length,
+    complete: "▌",
+    incomplete: "⠸",
+    width: 20
+  };
+
   if (category.length > 0) {
     return new progressBar(
-      `${message} ${chalk.hex(styles.colors.blue)(
+      `${chalk.hex(styles.colors.blue)(message)} ${chalk.hex(styles.colors.blue)(
         `category: ${category}`
-      )}: ${chalk.hex(styles.colors.blue)(":bar :current/:total")}`,
-      {
-        total: length,
-        complete: "▌",
-        incomplete: "⠸",
-        width: 20
-      }
+      )} ${chalk.hex(styles.colors.blue)(":bar :current/:total")}`,
+      BAR_CONFIG
     );
   }
   if (category.length <= 0) {
     return new progressBar(
-      `${message}: ${chalk.hex(styles.colors.blue)(":bar :current/:total")}`,
-      {
-        total: length,
-        complete: "▌",
-        incomplete: "⠸",
-        width: 20
-      }
+      `${chalk.hex(styles.colors.blue)(message)} ${chalk.hex(styles.colors.blue)(":bar :current/:total")}`,
+      BAR_CONFIG
     );
   }
 };

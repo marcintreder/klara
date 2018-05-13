@@ -4,7 +4,6 @@ module.exports = {
   webfontConfig: {
     active: true,
     settings: {
-      dest: "./IconFont",
       css: true,
       html: true,
       types: ["woff2", "woff", "eot", "svg"],
@@ -14,7 +13,6 @@ module.exports = {
   svgSprite: {
     active: true,
     settings: {
-      dest: "./SVGSprites",
       mode: {
         css: true,
         view: true,
@@ -26,8 +24,6 @@ module.exports = {
   },
   pngSprite: {
     active: true,
-    src: "./PNG",
-    dest: "./PNGSprite",
     settings: {
       stylesheet: "scss",
       stylesheetOptions: {
@@ -49,7 +45,6 @@ module.exports = {
   pngConverter: {
     active: true,
     settings: {
-      dest: "./PNG",
       width: 200,
       height: 200
     }

@@ -20,12 +20,10 @@ module.exports = function pngConverter(data) {
 
   // const filesArr = fse.readdirSync(dir);
   const categoryName = dir.substr(dir.indexOf("/") + 1);
-  const destination = `${upperDir}/PNG`; // pngConverterConfig.dest;
+  const destination = `${upperDir}/PNG`; 
   fse.ensureDirSync(`${destination}`);
 
-  const confirmationMsg = chalk.hex(styles.colors.blue)(
-    `⚛ Klara is converting ${categoryName} to PNG files`
-  );
+  const confirmationMsg = `⚛ Klara is converting ${categoryName} to PNG files`;
 
   /* Loader and Spinner */
   const bar = pBar(confirmationMsg, "", filesArr.length);
@@ -33,8 +31,6 @@ module.exports = function pngConverter(data) {
 
   spin.setSpinnerString(27);
   spin.start();
-  process.stderr.clearLine();
-  process.stdout.cursorTo(0);
 
   Promise.all(
     filesArr.map(file => {
@@ -63,7 +59,7 @@ module.exports = function pngConverter(data) {
       ? console.log(
           chalk.hex(styles.colors.mint)(
             `✓ Klara saved ${data.length} PNG ${
-              data.length > 1 ? "files" : "files"
+              data.length > 1 ? "files" : "file"
             } generated from SVGs`
           )
         )

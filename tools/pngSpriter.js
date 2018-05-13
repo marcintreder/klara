@@ -6,7 +6,7 @@ const chalk = require("chalk");
 const styles = require("../styles/chalkStyle");
 
 module.exports = function pngSpriter(dir) {
-  const categoryName = dir.substr(dir.indexOf("./"), dir.lastIndexOf("/"));
+  const categoryName = dir.substr(dir.indexOf("/") + 1);
   const pngSpriterConfig = config.pngSprite.settings;
   const upperDir = dir.substr(0, dir.lastIndexOf("/"));
   const pngSpriterSrc = upperDir;
@@ -50,7 +50,7 @@ module.exports = function pngSpriter(dir) {
     process.stdout.cursorTo(0);
     console.log(
       chalk.hex(styles.colors.mint)(
-        `✓ PNG Sprite Files for ${categoryName} saved!`
+        `✓ PNG sprite files for ${categoryName} saved!`
       )
     );
   });

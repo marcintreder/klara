@@ -6,23 +6,19 @@ const headerChalk = text => styles.text.headerChalk(text);
 const defaultChalk = text => styles.text.defaultChalk(text);
 
 function iconFontChecker(answers) {
-  return answers.assets.indexOf("Icon Fonts") > -1;
-}
-
-function svgChecker(answers) {
-  return answers.assets.indexOf("SVGs") > -1;
+  return answers.operations.indexOf("Convert SVGs to Icon Fonts") > -1;
 }
 
 function svgSpriteChecker(answers) {
-  return answers.assets.indexOf("SVG Sprites") > -1;
+  return answers.operations.indexOf("Convert SVGs to SVG Sprites") > -1;
 }
 
 function pngChecker(answers) {
-  return answers.assets.indexOf("PNGs") > -1;
+  return answers.operations.indexOf("Convert SVGs to PNGs") > -1;
 }
 
 function pngSpriteChecker(answers) {
-  return answers.assets.indexOf("PNG Sprites") > -1;
+  return answers.operations.indexOf("Convert PNGs to PNG Sprites") > -1;
 }
 
 module.exports = [
@@ -31,39 +27,23 @@ module.exports = [
     name: "url",
     message: `${headerChalk(
       "UXPin Design System:"
-    )} Copy/Paste link to your design system in UXPin: `,
+    )} Copy/Paste link to the data JSON from your design system in UXPin: `,
     default:
       "https://designtokens.uxpin.com/designSystems/hash/561bd39b43b4acaf6597/data/json"
   },
   {
     type: "checkbox",
-    name: "assets",
+    name: "operations",
     message: `${headerChalk(
       "Icons:"
-    )} Which assets would you like to generate for your icons?`,
+    )} What would you like to do with your assets?`,
     choices: [
-      { name: "SVGs" },
-      { name: "PNGs" },
-      { name: "Icon Fonts" },
-      { name: "SVG Sprites" },
-      { name: "PNG Sprites" }
+      { name: "Convert SVGs to Icon Fonts" },
+      { name: "Convert SVGs to PNGs" },
+      { name: "Convert SVGs to SVG Sprites" },
+      { name: "Convert PNGs to PNG Sprites" }
     ],
-    default: ["SVGs"]
-  },
-  {
-    type: "input",
-    name: "iconFont_dest",
-    message: `${headerChalk(
-      "Icon Fonts:"
-    )} Where would you like to save your iconFonts (${defaultChalk(
-      "Press <enter> to keep default"
-    )})?`,
-    default: function() {
-      return "./IconFonts";
-    },
-    when: function(answers) {
-      return iconFontChecker(answers);
-    }
+    default: ["Convert SVGs to Icon Fonts"]
   },
   {
     type: "checkbox",
@@ -110,25 +90,7 @@ module.exports = [
     name: "svgo",
     message: `${headerChalk(
       "SVG:"
-    )} Would you like to optimize your SVG files with SVGO?`,
-    when: function(answers) {
-      return svgChecker(answers);
-    }
-  },
-  {
-    type: "input",
-    name: "svg_sprite_dest",
-    message: `${headerChalk(
-      "SVG Sprite:"
-    )} Where would you like to save your SVG Sprites (${defaultChalk(
-      "Press <enter> to keep default"
-    )})?`,
-    default: function() {
-      return "./SVGSprites";
-    },
-    when: function(answers) {
-      return svgSpriteChecker(answers);
-    }
+    )} Would you like to optimize your SVG files with SVGO?`
   },
   {
     type: "checkbox",
@@ -146,36 +108,6 @@ module.exports = [
     default: ["css"],
     when: function(answers) {
       return svgSpriteChecker(answers);
-    }
-  },
-  {
-    type: "input",
-    name: "png_dest",
-    message: `${headerChalk(
-      "PNG:"
-    )} Where would you like to save your PNG files (${defaultChalk(
-      "Press <enter> to keep default"
-    )})?`,
-    default: function() {
-      return "./PNG";
-    },
-    when: function(answers) {
-      return pngChecker(answers);
-    }
-  },
-  {
-    type: "input",
-    name: "png_sprite_dest",
-    message: `${headerChalk(
-      "PNG Sprite:"
-    )} Where would you like to save your PNG sprites (${defaultChalk(
-      "Press <enter> to keep default"
-    )})?`,
-    default: function() {
-      return "./PNGSprite";
-    },
-    when: function(answers) {
-      return pngSpriteChecker(answers);
     }
   },
   {

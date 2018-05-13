@@ -18,7 +18,7 @@ module.exports = function svgSpriter(dir) {
   /* Read directory */
   const filesArr = fse.readdirSync(dir);
   const fullFilesArr = filesArr.map(item => `${dir}/${item}`);
-  const categoryName = dir.substr(dir.indexOf("./") + 1);
+  const categoryName = dir.substr(dir.indexOf("/") + 1);
   /* Create sprites directory */
   fse.ensureDirSync(spritesConfig.dest);
 
@@ -55,7 +55,7 @@ module.exports = function svgSpriter(dir) {
       process.stdout.cursorTo(0);
       console.log(
         chalk.hex(styles.colors.mint)(
-          `✓ SVG Sprite Files for ${categoryName} saved!`
+          `✓ SVG sprite files for ${categoryName} saved!`
         )
       );
     });
