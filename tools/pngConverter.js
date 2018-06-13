@@ -1,70 +1,88 @@
 const fse = require("fs-extra");
 const path = require("path");
-const config = require(`${process.cwd()}/icons.config.js`);
+const CONFIG = require(`${process.cwd()}/icons.config.js`);
 const svg2png = require("svg2png");
-const pngSpriter = require("./pngSpriter");
+//const pngSpriter = require("./pngSpriter");
 const pBar = require("./utils/pBar");
 const chalk = require("chalk");
 const styles = require("../styles/chalkStyle");
 const spinner = require("./utils/spinner");
+const { fork } = require("child_process");
 
-const pngConverterConfig = config.pngConverter.settings;
+const PNG_CONVERTER_CONFIG = CONFIG.pngConverter.settings;
 
-module.exports = function pngConverter(data) {
+/* Invokes forked child process on message from the parent */
+process.on("message", data => {
+  pngConverter(data);
+});
+
+async function pngConverter(data) {
   /* Create an array of modified files */
   const filesArr = data.map(item => {
     return item.fileName;
   });
+  /* Builds destination directory for PNG files */
   const dir = data[0]["modified"];
   const upperDir = dir.substr(0, dir.lastIndexOf("/"));
-
-  // const filesArr = fse.readdirSync(dir);
   const categoryName = dir.substr(dir.indexOf("/") + 1);
-  const destination = `${upperDir}/PNG`; 
-  fse.ensureDirSync(`${destination}`);
+  const destination = `${upperDir}/PNG`;
+  fse.ensureDir(`${destination}`);
 
-  const confirmationMsg = `⚛ Klara is converting ${categoryName} to PNG files`;
-
-  /* Loader and Spinner */
-  const bar = pBar(confirmationMsg, "", filesArr.length);
-  const spin = spinner("❊ Preparing SVGs for PNG conversion...");
-
+  /* Set Progress Bar and Spinner */
+  const processMsg = chalk.hex(styles.colors.blue)(
+    `⚛ Klara is converting ${categoryName} to PNG files`
+  );
+  //const bar = pBar(processMsg, "", filesArr.length);
+  const spin = spinner("");
   spin.setSpinnerString(27);
-  spin.start();
-
-  Promise.all(
-    filesArr.map(file => {
+  process.stderr.clearLine();
+  process.stdout.cursorTo(0);
+  /* Start spinner */
+  //spin.start();
+  //await
+  return Promise.all(
+    /* Iterate over array of files to be converted into png */
+    filesArr.map(async file => {
+      /* Find full path to every SVG to be converted into PNG*/
       const fullPath = `${dir}/${file}`;
       const fileName = file.substr(0, file.indexOf(".svg"));
 
-      return fse
+      /* Read file and start conversion.
+      ** svg2png doesn't support readable streams.
+      */
+      return await fse
         .readFile(fullPath)
-        .then(sourceBuffer => {
-          return svg2png(sourceBuffer, {
-            width: pngConverterConfig.width,
-            height: pngConverterConfig.height
+        .then(async sourceBuffer => {
+          return await svg2png(sourceBuffer, {
+            width: PNG_CONVERTER_CONFIG.width,
+            height: PNG_CONVERTER_CONFIG.height
+          }).then(buffer => {
+            fse.writeFile(`${destination}/${fileName}.png`, buffer);
+            return Promise.resolve({ destination });
           });
-        })
-        .then(buffer => {
-          spin.stop(true);
-          bar.tick();
-          fse.writeFile(`${destination}/${fileName}.png`, buffer);
-          return Promise.resolve({ fileName });
         })
         .catch(e => console.error(e));
     })
-  ).then(data => {
-    spin.stop(true);
-    bar.complete
-      ? console.log(
-          chalk.hex(styles.colors.mint)(
-            `✓ Klara saved ${data.length} PNG ${
-              data.length > 1 ? "files" : "file"
-            } generated from SVGs`
-          )
+  )
+    .then(data => {
+      /* Send information that process has been done to the parent */
+      process.stderr.clearLine();
+      process.stdout.cursorTo(0);
+      console.log(
+        chalk.hex(styles.colors.mint)(
+          `✓ ${chalk.bold(categoryName)}: ${data.length} PNG ${
+            data.length > 1 ? "files" : "file"
+          } saved!\r`
         )
-      : console.log("");
+      );
 
-    config.pngSprite.active ? pngSpriter(`${destination}`) : "";
-  });
-};
+      /* Fork the pngSpriter and if png spriter is active in the config – run it */
+      const forkedPNGSpriter = fork(`${path.resolve(__dirname)}/pngSpriter.js`);
+      CONFIG.pngSprite.active ? forkedPNGSpriter.send(`${destination}`) : "";
+
+      /* Make sure that the process exits */
+      process.exit(0);
+      process.kill("SIGKILL");
+    })
+    .catch(err => console.error(err));
+}

@@ -5,7 +5,11 @@ const nsg = require("node-sprite-generator");
 const chalk = require("chalk");
 const styles = require("../styles/chalkStyle");
 
-module.exports = function pngSpriter(dir) {
+process.on("message", data => {
+  pngSpriter(data);
+});
+
+async function pngSpriter(dir) {
   const categoryName = dir.substr(dir.indexOf("/") + 1);
   const pngSpriterConfig = config.pngSprite.settings;
   const upperDir = dir.substr(0, dir.lastIndexOf("/"));
@@ -14,44 +18,57 @@ module.exports = function pngSpriter(dir) {
 
   fse.ensureDirSync(`${pngSpriterDest}/pngSprite`);
 
-  const srcObj = { src: [`${dir}/*.png`] };
-  const spritePathObj = {
-    spritePath: `${pngSpriterDest}/pngSprite/${categoryName}Sprite.png`
-  };
+  const configBuilder = async () => {
+    const srcObj = { src: [`${dir}/*.png`] };
+    const spritePathObj = {
+      spritePath: `${pngSpriterDest}/pngSprite/${categoryName}Sprite.png`
+    };
 
-  const stylesSelector = () => {
-    if (pngSpriterConfig.stylesheet === "scss") {
-      return "scss";
-    } else if (pngSpriterConfig.stylesheet === "sass") {
-      return "sass";
-    } else if (pngSpriterConfig.stylesheet === "css") {
-      return "css";
-    } else if (pngSpriterConfig.stylesheet === "prefixed-css") {
-      return "css";
-    } else if (pngSpriterConfig.stylesheet === "less") {
-      return "less";
-    } else if (pngSpriterConfig.stylesheet === "javascript") {
-      return "js";
-    }
-  };
-  const stylesheetPathObj = {
-    stylesheetPath: `${pngSpriterDest}/pngSprite/${categoryName}Sprite.${stylesSelector()}`
-  };
+    const stylesSelector = () => {
+      if (pngSpriterConfig.stylesheet === "scss") {
+        return "scss";
+      } else if (pngSpriterConfig.stylesheet === "sass") {
+        return "sass";
+      } else if (pngSpriterConfig.stylesheet === "css") {
+        return "css";
+      } else if (pngSpriterConfig.stylesheet === "prefixed-css") {
+        return "css";
+      } else if (pngSpriterConfig.stylesheet === "less") {
+        return "less";
+      } else if (pngSpriterConfig.stylesheet === "javascript") {
+        return "js";
+      }
+    };
+    const stylesheetPathObj = {
+      stylesheetPath: `${pngSpriterDest}/pngSprite/${categoryName}Sprite.${stylesSelector()}`
+    };
 
-  const mergedConfig = Object.assign(
-    srcObj,
-    spritePathObj,
-    stylesheetPathObj,
-    pngSpriterConfig
-  );
-
-  nsg(mergedConfig, () => {
-    process.stderr.clearLine();
-    process.stdout.cursorTo(0);
-    console.log(
-      chalk.hex(styles.colors.mint)(
-        `✓ PNG sprite files for ${categoryName} saved!`
-      )
+    const mergedConfig = Object.assign(
+      srcObj,
+      spritePathObj,
+      stylesheetPathObj,
+      pngSpriterConfig
     );
-  });
-};
+
+    return await mergedConfig;
+  };
+
+  async function generateSprite(config) {
+    await nsg(config, () => {
+      const name = upperDir.substring(upperDir.indexOf("/") + 1);
+      process.stderr.clearLine();
+      process.stdout.cursorTo(0);
+      process.stdout.write(
+        chalk.hex(styles.colors.mint)(
+          `✓ ${chalk.bold(name)}: PNG sprite files saved! Layout: ${
+            pngSpriterConfig.layout
+          }. Stylesheet: ${pngSpriterConfig.stylesheet}.`
+        )
+      );
+      process.exit(0);
+      process.kill("SIGKILL");
+    });
+  }
+
+  configBuilder().then(config => generateSprite(config));
+}

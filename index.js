@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --harmony
 const fse = require("fs-extra");
 const configTemplate = require("./templates/config.template");
 /* CLI tools */
@@ -90,8 +90,9 @@ function createConfig() {
       });
 
       /* PNG Settings */
-      configTemplate.pngConverter.active = answers.operations.indexOf("Convert SVGs to PNGs") > -1;
-    
+      configTemplate.pngConverter.active =
+        answers.operations.indexOf("Convert SVGs to PNGs") > -1;
+
       /* PNG Sprite Settings */
       configTemplate.pngSprite.active =
         answers.operations.indexOf("Convert PNGs to PNG Sprites") > -1;
@@ -110,19 +111,24 @@ function createConfig() {
       fse.writeFileSync(
         `${process.cwd()}/icons.config.js`,
         moduleString,
-        "utf8");
-      console.log(chalk.hex(styles.colors.blue)("✓ config file created. Time to generate files!"));
+        "utf8"
+      );
+      console.log(
+        chalk.hex(styles.colors.blue)(
+          "✓ config file created. Time to generate files!"
+        )
+      );
 
       const spin = spinner("❊ Getting ready...");
       spin.setSpinnerString(27);
       spin.start();
-    
-      setTimeout(()=> {
+
+      setTimeout(() => {
         spin.stop(true);
         if (fse.existsSync(`${process.cwd()}/icons.config.js`)) {
           const assetsDownloader = require("./tools/assetsDownloader.js");
           assetsDownloader();
         }
-      }, 4000);      
+      }, 4000);
     });
 }

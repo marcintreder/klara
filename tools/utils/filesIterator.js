@@ -1,9 +1,18 @@
 const fse = require("fs-extra");
+const delay = require("delay");
 
 module.exports = function filesIterator(data) {
   /* Extract directory for category */
   const categoryDir = `./${data.name}`;
   // directories.push(categoryDir);
+  /* Check if all assets categories have assets */
+
+  //  console.log(data.name);
+  //console.log(data.items.length);
+  //console.log(data.name, data.items.length === 0);
+  //const x = data.items.filter(data.items.length === 0);
+  //console.log(x);
+
   /* Send all the files to the function responsible for download */
   const assetsArr = data.items.map(item => {
     /* Prepare object with assets data from JSON */

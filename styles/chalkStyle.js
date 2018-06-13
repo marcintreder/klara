@@ -4,7 +4,8 @@ const colors = {
   mint: "#00FFDE",
   green: "#108043",
   blue: "#4D98FF",
-  orange: "#F49342"
+  orange: "#F49342",
+  red: "#D85853"
 };
 
 module.exports = {
@@ -12,7 +13,8 @@ module.exports = {
     mint: colors.mint,
     green: colors.green,
     blue: colors.blue,
-    orange: colors.orange
+    orange: colors.orange,
+    red: colors.red
   },
   text: {
     titleChalk: text => chalk.inverse.bold(text),
