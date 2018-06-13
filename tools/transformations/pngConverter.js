@@ -24,7 +24,10 @@ async function pngConverter(data) {
   /* Builds destination directory for PNG files */
   const dir = data[0]["modified"];
   const upperDir = dir.substr(0, dir.lastIndexOf("/"));
-  const categoryName = dir.substr(dir.indexOf("/") + 1);
+  const categoryName = dir.substr(
+    dir.indexOf("/") + 1,
+    dir.lastIndexOf("/") - 2
+  );
   const destination = `${upperDir}/PNG`;
   fse.ensureDir(`${destination}`);
 

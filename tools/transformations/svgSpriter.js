@@ -22,7 +22,10 @@ async function svgSpriter(dir) {
   /* Read directory */
   const filesArr = fse.readdirSync(dir);
   const fullFilesArr = filesArr.map(item => `${dir}/${item}`);
-  const categoryName = dir.substr(dir.indexOf("/") + 1);
+  const categoryName = dir.substr(
+    dir.indexOf("/") + 1,
+    dir.lastIndexOf("/") - 2
+  );
   /* Create sprites directory */
   fse.ensureDirSync(SPRITES_CONFIG.dest);
 
