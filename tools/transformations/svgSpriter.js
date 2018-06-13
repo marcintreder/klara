@@ -6,7 +6,7 @@ const CONFIG = require(`${process.cwd()}/icons.config.js`);
 const progressBar = require("progress");
 const download = require("download");
 const chalk = require("chalk");
-const styles = require("../styles/chalkStyle");
+const styles = require("../../styles/chalkStyle");
 
 const SPRITES_CONFIG = CONFIG.svgSprite.settings;
 
@@ -81,6 +81,6 @@ async function svgSpriter(dir) {
         )
       );
       process.exit(0);
-      process.kill("SIGKILL");
+      process.kill("SIGTERM");
     });
 }

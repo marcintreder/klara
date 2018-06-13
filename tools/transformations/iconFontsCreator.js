@@ -6,7 +6,7 @@ const progressBar = require("progress");
 const path = require("path");
 const chalk = require("chalk");
 const sleep = require("sleep");
-const styles = require("../styles/chalkStyle");
+const styles = require("../../styles/chalkStyle");
 
 /* IconFontsGenerator uses webfontsGenerator package to generate iconfonts
 ** from SVGs downloaded from UXPin design system.
@@ -46,7 +46,7 @@ async function iconFontsCreator(dir) {
     /* Destination for iconFont files */
     const spriterDestObj = { dest: `${upperDir}/IconFonts` };
     const htmlTemplateObj = {
-      htmlTemplate: `${path.resolve(__dirname)}/../templates/html.hbs`
+      htmlTemplate: `${path.resolve(__dirname)}/../../templates/html.hbs`
     };
     await fse.ensureDirSync(`${upperDir}/IconFonts`);
     /* Name of the font generated from the asset category name in UXPin */
@@ -113,7 +113,7 @@ async function iconFontsCreator(dir) {
 
           /* Exit Process when the operation is done */
           process.exit(0);
-          process.kill("SIGKILL");
+          process.kill("SIGTERM");
         }
       }
     });

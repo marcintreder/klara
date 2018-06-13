@@ -3,10 +3,10 @@ const path = require("path");
 const CONFIG = require(`${process.cwd()}/icons.config.js`);
 const svg2png = require("svg2png");
 //const pngSpriter = require("./pngSpriter");
-const pBar = require("./utils/pBar");
+const pBar = require("../utils/pBar");
 const chalk = require("chalk");
-const styles = require("../styles/chalkStyle");
-const spinner = require("./utils/spinner");
+const styles = require("../../styles/chalkStyle");
+const spinner = require("../utils/spinner");
 const { fork } = require("child_process");
 
 const PNG_CONVERTER_CONFIG = CONFIG.pngConverter.settings;
@@ -56,15 +56,15 @@ async function pngConverter(data) {
           return await svg2png(sourceBuffer, {
             width: PNG_CONVERTER_CONFIG.width,
             height: PNG_CONVERTER_CONFIG.height
-          }).then(buffer => {
-            fse.writeFile(`${destination}/${fileName}.png`, buffer);
+          }).then(async buffer => {
+            await fse.writeFile(`${destination}/${fileName}.png`, buffer);
             return Promise.resolve({ destination });
           });
         })
-        .catch(e => console.error(e));
+        .catch(error => console.error(error));
     })
   )
-    .then(data => {
+    .then(async data => {
       /* Send information that process has been done to the parent */
       process.stderr.clearLine();
       process.stdout.cursorTo(0);
@@ -78,11 +78,14 @@ async function pngConverter(data) {
 
       /* Fork the pngSpriter and if png spriter is active in the config – run it */
       const forkedPNGSpriter = fork(`${path.resolve(__dirname)}/pngSpriter.js`);
+      //forkedPNGSpriter.unref();
       CONFIG.pngSprite.active ? forkedPNGSpriter.send(`${destination}`) : "";
 
-      /* Make sure that the process exits */
-      process.exit(0);
-      process.kill("SIGKILL");
+      forkedPNGSpriter.on("close", () => {
+        /* Make sure that the process exits */
+        process.exit();
+        process.kill("SIGTERM");
+      });
     })
     .catch(err => console.error(err));
 }

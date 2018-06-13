@@ -3,7 +3,7 @@ const path = require("path");
 const config = require(`${process.cwd()}/icons.config.js`);
 const nsg = require("node-sprite-generator");
 const chalk = require("chalk");
-const styles = require("../styles/chalkStyle");
+const styles = require("../../styles/chalkStyle");
 
 process.on("message", data => {
   pngSpriter(data);
@@ -54,19 +54,19 @@ async function pngSpriter(dir) {
   };
 
   async function generateSprite(config) {
-    await nsg(config, () => {
+    await nsg(config, err => {
       const name = upperDir.substring(upperDir.indexOf("/") + 1);
       process.stderr.clearLine();
       process.stdout.cursorTo(0);
-      process.stdout.write(
+      console.log(
         chalk.hex(styles.colors.mint)(
           `✓ ${chalk.bold(name)}: PNG sprite files saved! Layout: ${
             pngSpriterConfig.layout
-          }. Stylesheet: ${pngSpriterConfig.stylesheet}.`
+          }. Stylesheet: ${pngSpriterConfig.stylesheet}.\r`
         )
       );
       process.exit(0);
-      process.kill("SIGKILL");
+      process.kill("SIGTERM");
     });
   }
 

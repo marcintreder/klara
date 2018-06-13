@@ -293,15 +293,19 @@ module.exports = function filesDownloader(dir, assetsArr) {
     return modData;
   }
 
-  function pngSpriterDispatcher(modData, forkedPNGSpriter) {
+  async function pngSpriterDispatcher(modData, forkedPNGSpriter) {
     const pngCategory = modData.category.replace("SVG", "PNG");
-    forkedPNGSpriter.send(pngCategory);
-    return modData;
+    const filesArr = await fse.readdir(pngCategory);
+
+    if (filesArr.length > 0) {
+      await forkedPNGSpriter.send(pngCategory);
+      return modData;
+    }
   }
 
-  function pngConverterDispatcher(modData, forkedPNGConverter) {
+  async function pngConverterDispatcher(modData, forkedPNGConverter) {
     /* Forked process */
-    forkedPNGConverter.send(modData.modifiedCategory);
+    await forkedPNGConverter.send(modData.modifiedCategory);
     return modData;
   }
 
@@ -312,13 +316,17 @@ module.exports = function filesDownloader(dir, assetsArr) {
       if (modData.fileType === "svg" && CONFIG.webfontConfig.active) {
         /* Create forked process */
         const forkedFontsCreator = fork(
-          `${path.resolve(__dirname).replace("utils", "")}iconFontsCreator.js`
+          `${path
+            .resolve(__dirname)
+            .replace("download", "")}/transformations/iconFontsCreator.js`
         );
         /* Send Process to the dispatcher */
         return await iconFontsDispatcher(modData, forkedFontsCreator);
       } else if (modData.fileType === "png" && CONFIG.pngSprite.active) {
         const forkedPNGSpriter = fork(
-          `${path.resolve(__dirname).replace("utils", "")}pngSpriter.js`
+          `${path
+            .resolve(__dirname)
+            .replace("download", "")}/transformations/pngSpriter.js`
         );
 
         return await pngSpriterDispatcher(modData, forkedPNGSpriter);
@@ -329,7 +337,9 @@ module.exports = function filesDownloader(dir, assetsArr) {
     .then(async modData => {
       if (modData.fileType === "svg" && CONFIG.svgSprite.active) {
         const forkedSVGSpriter = fork(
-          `${path.resolve(__dirname).replace("utils", "")}svgSpriter.js`
+          `${path
+            .resolve(__dirname)
+            .replace("download", "")}/transformations/svgSpriter.js`
         );
 
         return await svgSpriterDispatcher(modData, forkedSVGSpriter);
@@ -341,9 +351,10 @@ module.exports = function filesDownloader(dir, assetsArr) {
       if (modData.fileType === "svg" && CONFIG.pngConverter.active) {
         /* Create fork for the pngConverter */
         const forkedPNGConverter = fork(
-          `${path.resolve(__dirname).replace("utils", "")}pngConverter.js`
+          `${path
+            .resolve(__dirname)
+            .replace("download", "")}/transformations/pngConverter.js`
         );
-
         return await pngConverterDispatcher(modData, forkedPNGConverter);
       } else {
         return modData;
