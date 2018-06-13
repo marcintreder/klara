@@ -1,5 +1,5 @@
 {
-  "name": "Klara",
+  "name": "klara",
   "version": "1.0.0",
   "description":
     "Klara is a tool for downloading and managing assets (icons, illustrations) stored in a design systems created in UXPin app (http://uxpin.com). Klara allows users to download assets and transform them into Icon Fonts, PNGs and SVG and PNG Sprites.",
@@ -18,9 +18,6 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "bin": {
-    "klara": "./index.js"
   },
   "license": "ISC",
   "dependencies": {
