@@ -1,5 +1,4 @@
 const fse = require("fs-extra");
-const delay = require("delay");
 
 module.exports = function filesIterator(data) {
   /* Extract directory for category */
