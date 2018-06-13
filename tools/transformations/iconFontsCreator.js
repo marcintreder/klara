@@ -40,7 +40,7 @@ async function iconFontsCreator(dir) {
   async function fontGenerator(filesArr) {
     /* Merge of configs affected by the application and the configs
     ** independent from the app (stored in the main config JSON)
-     */
+    */
 
     /* Array of all the files to be converted to an iconfont */
     /* Destination for iconFont files */

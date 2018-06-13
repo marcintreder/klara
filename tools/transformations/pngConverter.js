@@ -2,7 +2,6 @@ const fse = require("fs-extra");
 const path = require("path");
 const CONFIG = require(`${process.cwd()}/icons.config.js`);
 const svg2png = require("svg2png");
-//const pngSpriter = require("./pngSpriter");
 const pBar = require("../utils/pBar");
 const chalk = require("chalk");
 const styles = require("../../styles/chalkStyle");
@@ -35,14 +34,11 @@ async function pngConverter(data) {
   const processMsg = chalk.hex(styles.colors.blue)(
     `⚛ Klara is converting ${categoryName} to PNG files`
   );
-  //const bar = pBar(processMsg, "", filesArr.length);
   const spin = spinner("");
   spin.setSpinnerString(27);
   process.stderr.clearLine();
   process.stdout.cursorTo(0);
   /* Start spinner */
-  //spin.start();
-  //await
   return Promise.all(
     /* Iterate over array of files to be converted into png */
     filesArr.map(async file => {
@@ -81,7 +77,6 @@ async function pngConverter(data) {
 
       /* Fork the pngSpriter and if png spriter is active in the config – run it */
       const forkedPNGSpriter = fork(`${path.resolve(__dirname)}/pngSpriter.js`);
-      //forkedPNGSpriter.unref();
       CONFIG.pngSprite.active ? forkedPNGSpriter.send(`${destination}`) : "";
 
       forkedPNGSpriter.on("close", () => {

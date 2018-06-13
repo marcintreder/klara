@@ -41,7 +41,7 @@ module.exports = function filesDownloader(dir, assetsArr) {
           .use(throttle.plugin())
           .timeout({
             response: 5000, // Wait 5 seconds for the server to start sending,
-            deadline: 100000 // but allow 10 minute for the file to finish loading.
+            deadline: 100000 // but allow 10 minutes for the file to finish loading.
           })
           .retry(3)
           .then(res => {
@@ -88,9 +88,9 @@ module.exports = function filesDownloader(dir, assetsArr) {
         /* Check if file is an SVG and if SVGO is active */
         if (item.type === "svg" && CONFIG.svgo.active) {
           /* Optimize content of the file with SVGO so a comparison
-										** of local optimized file and file store on the server
-										** (pre–optimized) is going to be possible.
-											*/
+					** of local optimized file and file store on the server
+					** (pre–optimized) is going to be possible.
+					*/
           return await svgo.optimize(item.buffer).then(async function(result) {
             if (result.data !== localFile.toString()) {
               process.stderr.clearLine();
@@ -101,10 +101,9 @@ module.exports = function filesDownloader(dir, assetsArr) {
                 )
               );
               await fse.writeFile(item.fullDirectory, result.data);
-              //writeStream.write(result.data);
               /* Return a promise with the relevant data for
-														** other operations.
-															*/
+							** other operations.
+							*/
               return Promise.resolve({
                 modified: item.directory,
                 fileName: item.fullName
@@ -136,8 +135,8 @@ module.exports = function filesDownloader(dir, assetsArr) {
           }
         } else if (item.type !== "svg") {
           /* For non-svg files, compare the size on the server
-										** with the locally stored file.
-											*/
+					** with the locally stored file.
+					*/
           return new Promise(async (resolve, reject) => {
             await remote(item.url, (err, fileSize) => {
               if (err) {
@@ -154,7 +153,6 @@ module.exports = function filesDownloader(dir, assetsArr) {
                 chalk.hex(styles.colors.orange)(`Overwriting: ${item.fullName}`)
               );
               await fse.writeFile(item.fullDirectory, item.buffer);
-              //writeStream.write(item.buffer);
               return Promise.resolve({
                 modified: item.directory,
                 fileName: item.fullName
@@ -165,10 +163,9 @@ module.exports = function filesDownloader(dir, assetsArr) {
           });
         }
       } else {
-        /* File doesn't exist */
         /* If a directory doesn't exist yet, create it
-						** and download all the files.
-						*/
+				** and download all the files.
+				*/
         if (item.type === "svg" && CONFIG.svgo.active) {
           await svgo.optimize(item.buffer).then(async function(result) {
             return await fse.writeFile(item.fullDirectory, result.data);
@@ -179,8 +176,6 @@ module.exports = function filesDownloader(dir, assetsArr) {
             fileName: item.fullName
           });
         } else {
-          //writeStream.write(item.buffer);
-          //writeStream.end();
           await fse.writeFile(item.fullDirectory, item.buffer);
           return Promise.resolve({
             modified: item.directory,
@@ -194,9 +189,9 @@ module.exports = function filesDownloader(dir, assetsArr) {
 
   async function transformFiles(data) {
     /* Check if any files have been saved or modified.
-            ** If yes then data passed from the Promise should have
-            ** items with key "modified".
-            */
+    ** If yes then data passed from the Promise should have
+    ** items with key "modified".
+    */
     return await new Promise(async (resolve, reject) => {
       const modifiedCategory = await data.filter(item => {
         if (item["modified"]) {
@@ -219,22 +214,6 @@ module.exports = function filesDownloader(dir, assetsArr) {
 
       if (modifiedCategory.length > 0) {
         const category = modifiedCategory[0]["modified"];
-
-        /*const categoryName = modifiedCategory[0]["modified"].substring(
-          modifiedCategory[0]["modified"].indexOf("/") + 1,
-          modifiedCategory[0]["modified"].lastIndexOf("/")
-        );
-        /*
-          modifiedCategory.length > 0
-            ? modifiedCategory[0]["modified"].substring(
-                modifiedCategory[0]["modified"].indexOf("/") + 1,
-                modifiedCategory[0]["modified"].lastIndexOf("/")
-              )
-            : data[0]["unmodified"].substring(
-                data[0]["unmodified"].indexOf("/") + 1,
-                data[0]["unmodified"].lastIndexOf("/")
-              )*/
-
         const filesArr = await modifiedCategory.map(item => item.fileName);
         const filesTypesArr = await filesArr.map(item => {
           return item.substring(item.lastIndexOf(".") + 1).toLowerCase();
@@ -283,7 +262,6 @@ module.exports = function filesDownloader(dir, assetsArr) {
   }
 
   function iconFontsDispatcher(modData, forkedFontsCreator) {
-    //iconFontsCreator(modData.category);
     forkedFontsCreator.send(modData.category);
     return modData;
   }
